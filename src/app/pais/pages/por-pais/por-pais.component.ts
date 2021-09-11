@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { Country } from '../../interfaces/pais-interface';
 import { PaisService } from '../../services/pais.service';
 
@@ -6,13 +7,20 @@ import { PaisService } from '../../services/pais.service';
   selector: 'app-por-pais',
   templateUrl: './por-pais.component.html',
   styles: [
+    `
+    li{
+      cursor: pointer;
+    }
+    `
   ]
 })
 export class PorPaisComponent{
 
-  termino: string = 'Hola Mundo';
+  termino: string = '';
   hayError: boolean = false;
   paises: Country[] = [];
+  paisesSu: Country[] = [];
+  mostrarSu: boolean = false;
 
   constructor(private paisService: PaisService) { }
 
@@ -28,12 +36,25 @@ export class PorPaisComponent{
       },(err)=>{
         this.hayError = true;
         this.paises = [];
+        this.termino = termino;
       });
   }
 
   sugerencias(termino: string){
     this.hayError = false;
-    //TODO: crear sugerencias
+    this.termino = termino;
+    this.mostrarSu = true;
+    
+    this.paisService.buscarPais(termino)
+      .subscribe(paises=>this.paisesSu = paises.splice(0,5),
+      (err)=>this.paisesSu = []);
+
+  }
+
+  buscarSugerido(termino: string){
+    this.buscar( termino );
+  
+
   }
 
 }
